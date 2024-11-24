@@ -21,16 +21,29 @@ class LEDControlCallbacks: public BLECharacteristicCallbacks {
       digitalWrite(LED_PIN, HIGH);
       Serial.println("LED ON");
     }
-    else if (value == "0") {
+    if (value == "0") {
       digitalWrite(LED_PIN, LOW);
       Serial.println("LED OFF");
     }
 
-    else if (value == "2") {
-      Serial.println("LED OFF");
+    if (value == "2") {
+      Serial.println("motor 1 turning");
+    }
+    
+    if (value == "3") {
+      Serial.println("motor 2 turning");
+    }
+    
+    if (value == "4") {
+      Serial.println("motor 3 turning");
+    }
+    if (value == "5") {
+      Serial.println("motor 4 turing");
     }
   }
 };
+
+
 void setup() {
   Serial.begin(115200);
   pinMode(LED_PIN, OUTPUT);  // Set LED as output
