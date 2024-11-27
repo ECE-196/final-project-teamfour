@@ -11,7 +11,8 @@
         Alert,
       } from "react-native";
       import AsyncStorage from "@react-native-async-storage/async-storage";
-      
+      import { useRouter } from 'expo-router';
+
       export default function PillDetailsScreen() {
         type PillDetail = {
             id: string;
@@ -25,7 +26,19 @@
           const [time, setTime] = useState("");
           const [slot, setSlot] = useState("");
           const [pillDetails, setPillDetails] = useState([]);
-        
+
+          const [data, setData] = useState('');
+          const router = useRouter(); // Router hook
+
+          const handlePress = () => {
+            // Pass data as part of the URL
+            const pillTimeSlotDosageData = pillDetails.map((pill) => `${pill.time};${pill.slot};${pill.dosage}`).join(',');
+            console.log(pillTimeSlotDosageData);
+            // Send this string as part of the URL
+            router.push(`./major_backEnd?pillTimeSlotDosageData=${pillTimeSlotDosageData}`);
+            };
+
+
           // Save data to AsyncStorage
           const saveData = async (data) => {
             try {
@@ -173,13 +186,17 @@
                 value={time}
                 onChangeText={setTime}
               />
-        
+
+            
+            <Button title="Go to Screen 2" onPress={handlePress} />
+              
+                    
               <Button title="Add Pill" onPress={addPillDetail} />
         
               {/* Table Header */}
               {pillDetails.length > 0 && (
                 <>
-                  <Text style={styles.tableHeader}>Pill Schedule</Text>
+                  <Text style={styles.tableHeader}>Current Pill Schedule</Text>
                   <View style={styles.tableRow}>
                     <Text style={styles.tableHeaderCell}>Pill Name</Text>
                     <Text style={styles.tableHeaderCell}>Dosage</Text>
