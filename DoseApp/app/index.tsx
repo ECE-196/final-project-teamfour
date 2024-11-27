@@ -1,31 +1,35 @@
 import React from "react";
 import { View, Text, Button, ImageBackground, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { PillDetailsProvider } from "./PillDetailsContext"; // Import your context provider
 
-export default function HomePage() {
+export default function App() {
   const router = useRouter();
 
   return (
-    <ImageBackground
-      source={require("/Users/anupamanambiar/Desktop/DoseApp_2/assets/images/pill_bg.png")} // Path to your image
-      style={styles.background}
-      resizeMode="cover" // Adjust the resize mode (cover, contain, stretch)
-    >
-      <View style={styles.content}>
-      <View style={styles.textBox}>
-          <Text style={styles.text}>..DoseApp..</Text>
-      
-        <Button
-          title="Go to Back End page"
-          onPress={() => router.push("./major_backEnd")} // Navigate to /major_backEnd
-        />
-        <Button
-          title="Go to user_details"
-          onPress={() => router.push("./enter_user_details")} // Navigate to /major_backEnd
-        />
-      </View>
-      </View>
-    </ImageBackground>
+    // Wrap the app content with PillDetailsProvider
+    <PillDetailsProvider>
+      <ImageBackground
+        source={require("/Users/anupamanambiar/Desktop/DoseApp_2/assets/images/pill_bg.png")} // Path to your image
+        style={styles.background}
+        resizeMode="cover" // Adjust the resize mode (cover, contain, stretch)
+      >
+        <View style={styles.content}>
+          <View style={styles.textBox}>
+            <Text style={styles.text}>..DoseApp..</Text>
+
+            <Button
+              title="Go to Back End page"
+              onPress={() => router.push("./major_backEnd")} // Navigate to /major_backEnd
+            />
+            <Button
+              title="Go to user_details"
+              onPress={() => router.push("./enter_user_details")} // Navigate to /enter_user_details
+            />
+          </View>
+        </View>
+      </ImageBackground>
+    </PillDetailsProvider>
   );
 }
 
