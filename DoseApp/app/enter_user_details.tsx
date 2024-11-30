@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import {
   View,
   Text,
@@ -32,7 +32,7 @@ export default function PillDetailsScreen() {
   const { pillDetails, setPillDetails } = useContext(PillDetailsContext); // Use context to manage pillDetails state
 
   const [isTableVisible, setIsTableVisible] = useState(false); // Track if the table is visible
-  const [height] = useState(new Animated.Value(0)); // For animation
+  const height = useRef(new Animated.Value(0)).current; // For animation, using useRef here
 
   // Save data to AsyncStorage
   const saveData = async (data: PillDetail[]) => {
@@ -192,14 +192,24 @@ export default function PillDetailsScreen() {
         onChangeText={setTime}
       />
 
-      <Button title="Add Pill to Table" onPress={addPillDetail} />
-      <Button
-        title="Save Data"
-        onPress={() => router.push("./major_backEnd")} // Navigate to /enter_user_details
-      />
+      <View style={styles.buttonContainer}>
+        <Button title="Add Pill to Table" onPress={addPillDetail} />
+      </View>
+      
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Return to home screen"
+          onPress={() => router.push("./major_backEnd")} // Navigate to /enter_user_details
+        />
+      </View>
 
-      {/* Toggle Table Visibility Button */}
-      <Button title={isTableVisible ? "Collapse " : "Tap to see current Pill Details"} onPress={toggleTableVisibility} />
+      <View style={styles.buttonContainer}>
+        {/* Toggle Table Visibility Button */}
+        <Button
+          title={isTableVisible ? "Collapse" : "Tap to see current Pill Details"}
+          onPress={toggleTableVisibility}
+        />
+      </View>
 
       {/* Table Content */}
       <Animated.View style={[styles.table, { height }]}>
@@ -227,17 +237,20 @@ export default function PillDetailsScreen() {
   );
 }
 
+
 const styles = StyleSheet.create({
+    
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#008080",
   },
   header: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
     textAlign: "center",
+    color: "#FFFF"
   },
   input: {
     borderWidth: 1,
@@ -248,7 +261,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   table: {
-    marginTop: 20,
+    marginTop: 5,
   },
   tableHeader: {
     fontSize: 18,
@@ -256,28 +269,57 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
     textAlign: "center",
+    padding:5,
+    borderWidth: 1,
+    borderColor: "#FFFF",
   },
   tableRow: {
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    borderWidth: 1,
+    borderColor: "#ccc",
     paddingVertical: 5,
+    
   },
   row: {
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#ccc",
+    borderColor: "#ccc",
+    borderWidth: 1,
     paddingVertical: 10,
   },
   cell: {
     flex: 1,
     fontSize: 16,
     textAlign: "center",
+    
+
   },
   tableHeaderCell: {
     flex: 1,
     fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
+  },
+
+  buttonContainer: {
+    color: '#F5D1A1', // Text color
+    marginTop: 20,
+    marginRight: 10,
+    width: "50%",
+    justifyContent: "space-between",
+    backgroundColor: "#F0F0F0",
+    shadowColor: '#000', // Shadow color
+    shadowOffset: { width: 0, height: 4 }, // Offset for shadow
+    shadowOpacity: 0.3, // Opacity of shadow
+    shadowRadius: 5, // Blur radius of shadow
+    alignSelf:"center"
+  },
+  buttonText: {
+    color: '#000', // Text color
+    fontSize: 10,
+  },
+  buttonRow: {
+    flexDirection: 'row', // Arrange buttons in a row
+    justifyContent: 'space-between', // Space between buttons
+    flexWrap: 'wrap', // Allow buttons to wrap if the screen is too narrow
   },
 });
