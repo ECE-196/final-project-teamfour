@@ -43,6 +43,21 @@ class LEDControlCallbacks: public BLECharacteristicCallbacks {
   }
 };
 
+// BLE server and advertising setup
+class MyServerCallbacks: public BLEServerCallbacks {
+  void onConnect(BLEServer* pServer) {
+    Serial.println("Client connected");
+  }
+
+  void onDisconnect(BLEServer* pServer) {
+    Serial.println("Client disconnected");
+    
+    // Restart advertising when the device is disconnected
+    BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+    pAdvertising->start();
+    Serial.println("Advertising restarted after disconnect");
+  }
+};
 
 void setup() {
   Serial.begin(115200);
@@ -51,18 +66,24 @@ void setup() {
   // Initialize BLE
   BLEDevice::init("ESP32");
   BLEServer *pServer = BLEDevice::createServer();
+  
+  // Set callback for connect and disconnect events
+  pServer->setCallbacks(new MyServerCallbacks());
+
   BLEService *pService = pServer->createService(SERVICE_UUID);
 
   // Create a writable characteristic for controlling the LED
   ledCharacteristic = pService->createCharacteristic(
                         CHARACTERISTIC_UUID,
-                        BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_WRITE
+                        BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE
                       );
   
   // Set the callback function for when data is written to the characteristic
-  ledCharacteristic->setCallbacks( new LEDControlCallbacks());
+  ledCharacteristic->setCallbacks(new LEDControlCallbacks());
 
   pService->start();
+
+  // Start BLE advertising
   BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
   pAdvertising->addServiceUUID(SERVICE_UUID);
   pAdvertising->start();
@@ -70,9 +91,6 @@ void setup() {
   Serial.println("BLE LED Control Initialized. Waiting for client...");
 }
 
-
-
 void loop() {
-  //Serial.println("connected");
   // Nothing to do in the loop for this example
 }

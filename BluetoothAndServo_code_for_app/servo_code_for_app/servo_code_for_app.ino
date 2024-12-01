@@ -10,7 +10,7 @@
 const int servoPins[4] = {13, 14, 15, 16}; // Example GPIO pins for servos
 
 const int minPulse = 500;          // Minimum pulse width (0 degrees)
-const int maxPulse = 2000;         // Maximum pulse width (135 degrees)
+const int maxPulse = 2500;         // Maximum pulse width (135 degrees)
 
 // BLE Service and Characteristic UUIDs (customize if needed)
 #define SERVICE_UUID        "12345678-1234-5678-1234-56789abcdef0"
@@ -38,7 +38,7 @@ class ControlCallbacks: public BLECharacteristicCallbacks {
     else if (value == "2") { // Operate servo 1
       servos[0].write(0);    // Move to 0 degrees
       delay(1000);
-      servos[0].write(180);  // Move to 135 degrees
+      servos[0].write(135);  // Move to 135 degrees
       delay(1000);
       servos[0].write(0);    // Move back to 0 degrees
       delay(1000);
@@ -76,6 +76,23 @@ class ControlCallbacks: public BLECharacteristicCallbacks {
     }
   }
 };
+
+// BLE server and advertising setup
+class MyServerCallbacks: public BLEServerCallbacks {
+  void onConnect(BLEServer* pServer) {
+    Serial.println("Client connected");
+  }
+
+  void onDisconnect(BLEServer* pServer) {
+    Serial.println("Client disconnected");
+    
+    // Restart advertising when the device is disconnected
+    BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+    pAdvertising->start();
+    Serial.println("Advertising restarted after disconnect");
+  }
+};
+
 void setup() {
   Serial.begin(115200);
   pinMode(LED_PIN, OUTPUT);  // Set LED as output
@@ -85,31 +102,39 @@ void setup() {
     servos[i].attach(servoPins[i], minPulse, maxPulse); // Attach and set pulse range
   }
 
-  // Initialize BLE
+
+//initializing esp
   BLEDevice::init("ESP32");
   BLEServer *pServer = BLEDevice::createServer();
+  
+  // Set callback for connect and disconnect events
+  pServer->setCallbacks(new MyServerCallbacks());
+
   BLEService *pService = pServer->createService(SERVICE_UUID);
 
   // Create a writable characteristic for controlling the LED
-  Characteristic = pService->createCharacteristic(
+  ledCharacteristic = pService->createCharacteristic(
                         CHARACTERISTIC_UUID,
-                        BLECharacteristic::PROPERTY_READ |BLECharacteristic::PROPERTY_WRITE
+                        BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE
                       );
   
   // Set the callback function for when data is written to the characteristic
-  Characteristic->setCallbacks( new ControlCallbacks());
+  ledCharacteristic->setCallbacks(new LEDControlCallbacks());
 
   pService->start();
+
+  // Start BLE advertising
   BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
   pAdvertising->addServiceUUID(SERVICE_UUID);
   pAdvertising->start();
 
-  Serial.println("BLE Control Initialized. Waiting for client...");
+  Serial.println("BLE LED Control Initialized. Waiting for client...");
 }
-
 
 
 void loop() {
   //Serial.println("connected");
   // Nothing to do in the loop for this example
 }
+
+

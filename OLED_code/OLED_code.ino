@@ -1,64 +1,64 @@
-#include <WiFi.h>
-#include "time.h"
-const long utcOffsetInSeconds = -8 * 3600; 
-const char* ssid     = ""; //get from user's app ******
-const char* password = ""; // for school with open network just leave the string empty
-int pill_taken_check=1; // have the app decide if pill has been taken and set the variable accordingly 
+// #include <Wire.h>
 
-void testdrawchar(void) {
-  display.clearDisplay();
+// void setup() {
+//   Wire.begin(26, 21);
+//   Serial.begin(115200);
+//   Serial.println("\nI2C Scanner");
+//   for (byte i = 8; i < 120; i++) {
+//     Wire.beginTransmission(i);
+//     if (Wire.endTransmission() == 0) {
+//       Serial.print("I2C device found at address 0x");
+//       Serial.println(i, HEX);
+//     }
+//   }
+// }
 
-  display.setTextSize(1);      // Normal 1:1 pixel scale
-  display.setTextColor(SSD1306_WHITE); // Draw white text
-  display.setCursor(0, 0);     // Start at top-left corner
-  display.cp437(true);         // Use full 256 char 'Code Page 437' font
+// void loop() {}
 
-  // Not all the characters will fit on the display. This is normal.
-  // Library will draw what it can and the rest will be clipped.
-  }
 
-  display.display();
-  delay(2000);
-}
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+// Define screen dimensions
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+
+// Define I2C pins (use default ESP32 pins or customize)
+#define SDA_PIN 26
+#define SCL_PIN 21
+
+// Create display object (set I2C address, default is 0x3C)
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 void setup() {
+  // Start the serial monitor for debugging
   Serial.begin(115200);
-  WiFi.begin(ssid, password);
-  
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
+
+  // Initialize I2C with custom pins if necessary
+  Wire.begin(SDA_PIN, SCL_PIN);
+
+  // Initialize the display
+  if (!display.begin(0x3C)) { // 0x3C is the default address
+    Serial.println(F("SSD1306 allocation failed"));
+    for (;;); // Stop execution if display is not found
   }
+  else{ Serial.print("connection began");}
+  
+  delay(500);
+    // Clear the display buffer
+  display.clearDisplay();
 
-  Serial.println("Connected to WiFi");
-
-  configTime(utcOffsetInSeconds, 0, "pool.ntp.org"); // Configures NTP server
+  // Display "Hello, World!" on the screen
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(1, 0);
+  display.println(F("1"));
+  display.display(); // Render text to the screen
+  delay(2000);
 }
 
 
 void loop() {
-  
-  struct tm timeinfo;
-  if (!getLocalTime(&timeinfo)) {
-    Serial.println("Failed to obtain time");
-    return;
-  }
-
-  //Serial.printf("Current time: %02d:%02d:%02d\n", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec); ------to check if the current time is right on serial
-
-
-//Writes the time that the pill is being dispensed at on the screen
-  if hour==timeinfo.tm_hour && min==timeinfo.tm_min && sec==timeinfo.tm_sec){
-    display.clearDisplay();
-    display.setCursor(0, 0);
-    display.write("Pill dispensed at: %02d:%02d:%02d\n", timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec);
-  }
-
-  if (pill_taken){
-  display.clearDisplay(); 
-  display.setCursor(0, 0);     // Start at top-left corner
-  }
-
-  delay(1000); // Update every second
+  // No actions in the loop
 }
-
