@@ -187,14 +187,7 @@ void setup() {
   display.display();
   display.clearDisplay();
     
-//   display.setTextSize(1); // Small font size
-//   display.setTextColor(SSD1306_WHITE);
-// // Display temperature
-//   display.setCursor(0, 0);
-//   display.print("Temp: ");
-  
-//   // Show updated data
-//   display.display();
+
 
 }
 

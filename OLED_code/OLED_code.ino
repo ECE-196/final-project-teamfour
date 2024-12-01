@@ -1,19 +1,4 @@
-// #include <Wire.h>
 
-// void setup() {
-//   Wire.begin(26, 21);
-//   Serial.begin(115200);
-//   Serial.println("\nI2C Scanner");
-//   for (byte i = 8; i < 120; i++) {
-//     Wire.beginTransmission(i);
-//     if (Wire.endTransmission() == 0) {
-//       Serial.print("I2C device found at address 0x");
-//       Serial.println(i, HEX);
-//     }
-//   }
-// }
-
-// void loop() {}
 
 
 #include <Wire.h>
