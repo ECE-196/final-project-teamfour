@@ -39,26 +39,29 @@ void setup() {
   Wire.begin(SDA_PIN, SCL_PIN);
 
   // Initialize the display
-  if (!display.begin(0x3C)) { // 0x3C is the default address
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
     Serial.println(F("SSD1306 allocation failed"));
-    for (;;); // Stop execution if display is not found
+    for (;;); // Halt execution
   }
-  else{ Serial.print("connection began");}
-  
-  delay(500);
-    // Clear the display buffer
-  display.clearDisplay();
-
-  // Display "Hello, World!" on the screen
-  display.setTextSize(1);
-  display.setTextColor(SSD1306_WHITE);
-  display.setCursor(1, 0);
-  display.println(F("1"));
-  display.display(); // Render text to the screen
+  display.display();
   delay(2000);
+  display.clearDisplay();
+    
+  display.setTextSize(1); // Small font size
+  display.setTextColor(SSD1306_WHITE);
+
+  // Display temperature
+  display.setCursor(0, 0);
+  display.print("Temp: ");
+  
+  // Show updated data
+  display.display();
 }
+
 
 
 void loop() {
   // No actions in the loop
+   // Display data on OLED screen
+
 }
