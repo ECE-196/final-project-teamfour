@@ -169,8 +169,11 @@ class ControlCallbacks: public BLECharacteristicCallbacks {
     }
 
     if (value == "6") {
-      Serial.println("clear display");
       display.clearDisplay();
+      display.setTextSize(2); // Small font size
+      display.setTextColor(SSD1306_WHITE);
+      display.setCursor(0, 0);
+      display.print("DoseBuddy");
       display.display();
     }
 
