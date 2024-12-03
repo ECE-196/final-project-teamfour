@@ -38,7 +38,18 @@ const int maxPulse = 2500;         // Maximum pulse width (135 degrees)
 
 
 Servo servos[4];
+void beep(int frequency, int duration) {
+  int period = 1000000 / frequency; // Period in microseconds
+  int halfPeriod = period / 2;     // Half period for toggling HIGH/LOW
 
+  unsigned long startTime = millis();
+  while (millis() - startTime < duration) {
+    digitalWrite(SPEAKER_PIN, HIGH);
+    delayMicroseconds(halfPeriod);
+    digitalWrite(SPEAKER_PIN, LOW);
+    delayMicroseconds(halfPeriod);
+  }
+}
 BLECharacteristic *ledCharacteristic;
 
 // Callback class for handling write events
@@ -79,7 +90,6 @@ class ControlCallbacks: public BLECharacteristicCallbacks {
       servos[0].write(135);  // Move to 135 degrees
       delay(1000);
       servos[0].write(0);    // Move back to 0 degrees
-      delay(1000);
       Serial.println("Servo 1 dispensed a pill");
       
       //notify on screen
@@ -103,7 +113,6 @@ class ControlCallbacks: public BLECharacteristicCallbacks {
       servos[1].write(135);  // Move to 135 degrees
       delay(1000);
       servos[1].write(0);    // Move back to 0 degrees
-      delay(1000);
       Serial.println("Servo 2 dispensed a pill");
      
       //notify on screen
@@ -126,7 +135,6 @@ class ControlCallbacks: public BLECharacteristicCallbacks {
       servos[2].write(135);  // Move to 135 degrees
       delay(1000);
       servos[2].write(0);    // Move back to 0 degrees
-      delay(1000);
       Serial.println("Servo 3 dispensed a pill");
 
       //notify on screen
@@ -150,7 +158,6 @@ class ControlCallbacks: public BLECharacteristicCallbacks {
       servos[3].write(135);  // Move to 135 degrees
       delay(1000);
       servos[3].write(0);    // Move back to 0 degrees
-      delay(1000);
       Serial.println("Servo 4 dispensed a pill");
       
       //notify on screen
@@ -196,18 +203,7 @@ class MyServerCallbacks: public BLEServerCallbacks {
   }
 };
 
-void beep(int frequency, int duration) {
-  int period = 1000000 / frequency; // Period in microseconds
-  int halfPeriod = period / 2;     // Half period for toggling HIGH/LOW
 
-  unsigned long startTime = millis();
-  while (millis() - startTime < duration) {
-    digitalWrite(SPEAKER_PIN, HIGH);
-    delayMicroseconds(halfPeriod);
-    digitalWrite(SPEAKER_PIN, LOW);
-    delayMicroseconds(halfPeriod);
-  }
-}
 
 void setup() {
   Serial.begin(115200);
